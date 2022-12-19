@@ -1,0 +1,275 @@
+---
+metadata:
+  title: |
+    
+  short title: |
+    
+  description: |
+    
+  authors:
+    - name: Diego Flores O 
+      organization: Cactus Legal Tech 
+  show login: True
+  exit url: https://www.cactuslegaltech.com/
+---
+default validation messages:
+  required: |
+    Ingresa una respuesta.
+  multiple choice required: |
+    Selecciona una opción.
+  date: |
+    Ingresa una fecha válida.
+  email: |
+    Ingresa una dirección válida de correo electrónico.
+  number: |
+    Ingresa un número.
+  combobox required: |
+    Selecciona o ingresa una respuesta.
+---
+metadata:
+  back button label: |
+    Deshacer
+  help label: |
+    Ayuda
+  continue button label: |
+    Continuar
+---
+auto terms:
+  - AGU: |
+      Administrador general único.
+  - Google Chrome: |
+      Si no cuentas con él, *[descárgalo aquí](https://www.google.com/chrome/)*.
+---
+comment: |
+  dividir entre 12 y multiplicar x 365
+  
+  15k 1 de enero entró. salario diario: 493.15 aguinaldo: 
+  
+  sueldo diario x día multiplicas x días trabjados.
+  
+  sueldo diario del aguinaldo 41.07x30 días 20.26x quincena. (sueldo x día x 30.4) entre 365. x 15 si fuera quincenca.
+  
+  
+---
+interview help:
+  label: Ayuda
+  heading: Recursos de ayuda
+  content: |    
+    [[FILE soporte_cactus.png, 33%, Soporte Técnico]](https://wa.me/523315401920)
+    [[FILE soporte_legal_aliado_cactus.png, 30%, Soporte Legal]](https://wa.me/523315401920)
+    [[FILE ley_aplicable.png, 32%, Ley]](https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf)
+    [[FILE ayudanos_mejores.png, 44%, Buzón de Sugerencias]](https://forms.gle/JrmJcK2xExKQiZzH8)
+
+    
+    - Envíanos un correo a *diego@cactuslegaltech.com*.
+    
+
+---
+default screen parts:
+  under: |
+    ${ action_button_html("https://wa.me/523315401920", label="¿No sabes qué contestar? Contacta a un asesor", color="link", size="md") }
+    <br/>
+    
+    <div align="center">${ action_button_html(url_of('restart'), label = "Calcular otro aguinaldo", color = "warning", size = "md")}
+    <br/>
+    <br/>
+    <div align="justify">Obtén ayuda en la parte superior izquierda de la pantalla.
+---
+section: Intro
+continue button label: |
+  Continuar
+question: |
+  <div align="center">[FILE portada_aguinaldo.png, 100%, Aguinaldo]<div align="center">
+  
+subquestion: |
+  Hola,
+  
+  <div align="justify">Presiona “Continuar” para ingresar a la calculadora de aguinaldos.<div align="justify"> 
+  <br/>
+under: |
+
+  
+  *Powered by* ***[Cactus Legal Tech](https://www.cactuslegaltech.com/)***.
+  
+  
+field: intro
+
+---
+features:
+  debug: False
+  labels above fields: True
+  navigation: True
+  progress bar: False
+  question back button: True
+
+---
+initial: True
+code: |
+  iniciales
+  intro
+  fecha_ingreso
+  disclaimer
+  notificacion_dg_cactus
+  calculo
+
+---
+continue button field: disclaimer
+question: |
+  <div align="center">[FILE megaphone_cactus.png, 35%, Disclaimer]  <div align="center">
+  
+subquestion: |
+
+  <div align="justify">Esta herramienta la ofrece Cactus Legal Tech para orientar al público general.<div align="justify">
+  
+  <br/>
+
+  <div align="justify">La asesoría personalizada que presta un abogado a un cliente es un tema más especializado que esta herramienta, por ello aclaramos al Usuario que al usarla (1) no crea o constituye una relación cliente - abogado con Cactus Legal Tech, y (2) no constituye asesoría legal, ni ofrece un sustituto a la obtención de asesoría legal por un abogado calificado.<div align="justify">
+  
+  <br/>
+
+  <div align="justify">Presiona “Estoy de acuerdo” si comprendes y estás de acuerdo con el texto anterior.<div align="justify">
+  
+  <br/>
+  
+
+continue button label: |
+     Estoy de acuerdo
+---
+code: |
+  fecha_inicio = today()
+  hora_inicio = current_datetime()
+  iniciales = True
+---
+question: |
+  <div align="center">[FILE fecha_nac.png, 35%, Antiguedad]<div align="center">
+subquestion: |
+  <div align="justify">Selecciona la fecha en la que ingresó a laborar el trabajador.<div align="justify">
+  <br/>
+fields:
+  - no label: fecha_ingreso
+    datatype: date
+  - Selecciona la forma en que deseas ingresar el monto del salario: frecuencia
+    input type: radio
+    choices:
+      - Diario: diario
+      - Semanal: semanal
+      - Quincenal: quincenal
+      - Mensual: mensual
+  - Salario diario: monto_salario
+    datatype: number
+    show if:
+      variable: frecuencia
+      is: diario
+  - Salario semanal: monto_salario
+    datatype: number
+    show if:
+      variable: frecuencia
+      is: semanal
+  - Salario quincenal: monto_salario
+    datatype: number
+    show if:
+      variable: frecuencia
+      is: quincenal
+  - Salario mensual: monto_salario
+    datatype: number
+    show if:
+      variable: frecuencia
+      is: mensual
+continue button label: |
+  Calcular aguinaldo
+validation code: |
+
+  if fecha_ingreso > current_datetime():
+    validation_error("Asegúrate de ingresar una fecha de ingreso previa al día de hoy.")
+---
+code: |
+  if frecuencia == "diario":
+    monto_salario_diario = monto_salario
+  elif frecuencia == "semanal":
+    monto_salario_diario = monto_salario/7
+  elif frecuencia == "quincenal":
+    monto_salario_diario = monto_salario/15
+  elif frecuencia == "mensual":
+    monto_salario_diario = monto_salario/30.4
+---
+event: calculo
+question: |
+  <div align="center">[FILE calculadora.png, 35%, Calculadora]<div align="center">
+subquestion: |
+  <div align="justify">
+  % if mas_un_ano:
+  De conformidad con el primer párrafo del artículo 87 de la Ley Federal del Trabajo, y en virtud de que el trabajador lleva más de un año laborando en su actual empleo, le corresponden ${currency(aguinaldo)} pesos por concepto de aguinaldo, equivalentes a ${nice_number(numero_dias_aguinaldo)} días de salario.
+  % else:
+  De conformidad con el segundo párrafo del artículo 87 de la Ley Federal del Trabajo, y en virtud de que el trabajador lleva solamente ${nice_number(no_dias_ano_trabajados_fto)} días laborando en su actual empleo, al trabajador le corresponden ${currency(aguinaldo)} pesos por concepto de aguinaldo.
+
+  % endif
+  <br/>
+  <br/>
+  Asimismo, te recordamos que el aguinaldo deberá pagarse antes del día 20 de diciembre.
+  <div align="justify">
+  <br/>
+---
+code: |
+  notificacion_dg_cactus = send_email(to = email_cactus, template = mail_notificacion_cactus)
+comment: |
+  , attachments = imprimir_demanda
+---
+code: |
+  email_cactus = "diego@cactuslegaltech.com"
+---
+template: mail_notificacion_cactus
+subject: |
+  Aguinaldo Calculado (Cactus)
+content: |
+  Salario diario: *${currency(monto_salario_diario)}*.
+  <br/>
+  <br/>
+  Fecha y hora inicio: *${format_date(fecha_inicio, format='yy/MM/dd')}* *a las* *${format_time(hora_inicio)}*.
+  <br/>
+  <br/>
+  Fecha y hora finalización: *${format_date(today(), format='yy/MM/dd')}* *a las* *${format_time(current_datetime())}*.
+  <br/>
+---
+comment: |
+  TEMPORALES
+code: |
+  aguinaldo = monto_salario_diario*numero_dias_aguinaldo
+---
+code: |
+  if mas_un_ano:
+  
+    numero_dias_aguinaldo = 15
+    
+  else:
+    
+    numero_dias_aguinaldo = no_dias_ano_trabajados.days*.0410959
+---
+comment: |
+
+code: |
+  un_ano_atras = current_datetime() - date_interval(years=1)
+
+---
+code: |
+  no_dias_ano_trabajados = date_difference(starting=fecha_ingreso_menos1, ending=fecha_fin_ano) 
+---
+code: |
+  fecha_ingreso_menos1 = fecha_ingreso - date_interval(days=1)
+---
+code: |
+  fecha_fin_ano = as_datetime('12/31/2022')
+---
+code: |
+  no_dias_ano_trabajados_fto = int(no_dias_ano_trabajados.days)
+---
+code: |
+  mas_un_ano = True
+  if no_dias_ano_trabajados.days > 365:
+    
+    mas_un_ano = True
+    
+  else:
+    
+    mas_un_ano = False
+    
+    
